@@ -12,7 +12,7 @@ Methods for representing geographic coordinates (latitude and longitude) includi
 > * GeoVector objects can be added, subtracted, multiplied or divided
 
 #### Installation
-LatLon has only been tested in Python 2.7
+LatLon has only been tested in Python 2.7, 3.6
 
 Installation through pip:
 
@@ -109,6 +109,9 @@ print(palmyra + (vector/2.0)) # Recreate the coordinates of Honolulu by adding h
 1.0.2 - Tested on Python 2.7 with Eclipse IDLE. Please let me know of any issues.
 
 #### Changelog
+
+##### 1.0.3 (June/16/2019)
+> * Support for Python 2.7 and Python 3
 
 ##### 1.0.2 (OCTOBER/14/2014)
 
