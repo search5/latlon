@@ -113,10 +113,16 @@ print(palmyra + (vector/2.0)) # Recreate the coordinates of Honolulu by adding h
 ```
 
 #### Version
-1.0.2 - Tested on Python 2.7 with Eclipse IDLE. Please let me know of any issues.
+1.0.4 - Tested on Python 3.7 with Eclipse IDLE. Please let me know of any issues.
 
 #### Changelog
 
+##### 1.0.4 (August/10/2021)
+> * Replaced with setuptools in distutils during python packaging.
+> * The angle information was initialized when the GeoCord class was initialized.
+> * The function removed from Python 3 was added separately for compatibility with Python 2.
+> * In addition, we renamed the modules being imported from lat_lon to latlon and improved the test program to work with both Pythons 2 and 3.
+ 
 ##### 1.0.3 (June/16/2019)
 > * Support for Python 2.7 and Python 3
 
