@@ -24,6 +24,6 @@ setup(
         "Natural Language :: English",
         "Operating System :: OS Independent",
         "Programming Language :: Python",
-        "Topic ::Scientific/Engineering"
+        "Topic :: Scientific/Engineering"
     ]
 )
