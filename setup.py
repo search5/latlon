@@ -1,26 +1,20 @@
-#!/usr/bin/env python
-# -*- coding: us-ascii -*-
-# vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab
-"""Examples:
-        setup.py sdist
-        setup.py bdist_wininst
-"""
-
-from distutils.core import setup
+from setuptools import setup
 
 long_description = open("README.md", "r").read()
 
-setup(name='latlon3',
-    version='1.0.3',
-    description='Methods for representing geographic coordinates',
+setup(
+    name='latlon3',
+    version='1.0.4',
+    packages=[''],
     url='https://github.com/search5/latlon',
     license='GNU General Public License v3 (GPLv3)',
-    scripts=['__init__.py', 'lat_lon.py'],
-    author="Lee Ji-ho",
-    author_email="search5@gmail.com",
+    author='Lee persy ji-ho',
+    author_email='search5@gmail.com',
+    description='Methods for representing geographic coordinates',
+    scripts=['__init__.py', 'latlon.py'],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=['six',],
+    install_requires=['six', 'pyproj'],
     classifiers=[
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 2.7",
@@ -31,4 +25,5 @@ setup(name='latlon3',
         "Operating System :: OS Independent",
         "Programming Language :: Python",
         "Topic ::Scientific/Engineering"
-    ])
+    ]
+)

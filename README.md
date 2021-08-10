@@ -12,17 +12,24 @@ Methods for representing geographic coordinates (latitude and longitude) includi
 > * GeoVector objects can be added, subtracted, multiplied or divided
 
 #### Installation
-LatLon has only been tested in Python 2.7, 3.6
+LatLon has only been tested in Python 2.7, 3.6, 3.7
 
 Installation through pip:
 
 ```bash
-$ pip install LatLon
+$ pip install latlon3
 ```
 
 Requires the following non-standard libraries:
 
 > * pyproj
+ 
+#### Module import
+```python
+import latlon
+```
+Subclasses described in README can be found under the latlon module.
+
 
 #### Usage Notes
 Usage of LatLon is primarily through the class LatLon, which is designed to hold a single pair of Latitude and Longitude objects. Strings can be converted to LatLon objects using the method string2latlon, and to Latitude or Longitude objects using string2geocoord. Alternatively, a LatLon object can be constructed by subtracting two LatLon objects, or adding or subtracting a Latlon object and a GeoVector object.
