@@ -83,7 +83,7 @@ class GeoCoord:
         degree = decimal_degree//1  # Truncate degree to be an integer
         decimal_minute = (decimal_degree - degree)*60.  # Calculate the decimal minutes
         minute = decimal_minute//1  # Truncate minute to be an integer
-        second = (decimal_minute - minute)*60.  # Calculate the decimal seconds
+        second = round((decimal_minute - minute)*60., 10)  # Calculate the decimal seconds
         # Finally, re-impose the appropriate sign
         degree = degree*sign
         minute = minute*sign
@@ -120,6 +120,12 @@ class GeoCoord:
             format (str) - A string of the form A%B%C where A, B and C are identifiers.
               Unknown identifiers (e.g. ' ', ', ' or '_' will be inserted as separators
               in a position corresponding to the position in format.
+              Format specifiers can include optional zero-pad width and decimal precision:
+                [0N]<specifier>[.P]
+                  0N = zero-pad to N total digits (integer part for decimals)
+                  .P = limit to P decimal places
+              Examples: '02d' for zero-padded degrees, 'M.3' for decimal minutes with 3 decimal places,
+                '02d%M.3%H' would give '05_52.998_N' with separator '_'
         Examples:
             >> palmyra = LatLon(5.8833, -162.0833)
             >> palmyra.to_string('D') # Degree decimal output
@@ -128,6 +134,10 @@ class GeoCoord:
             ('N 5.8833', 'W 162.0833')
             >> palmyra.to_string('d%_%M')
             ('5_52.998', '-162_4.998')
+            >> palmyra.to_string('d%_%M.3')
+            ('5_52.998', '-162_4.998')
+            >> palmyra.to_string('02d%M.3%H')
+            ('0552.998N', '16204.998W')
         """
         format2value = {'H': self.get_hemisphere(),
                         'M': abs(self.decimal_minute),
@@ -136,12 +146,63 @@ class GeoCoord:
                         'D': self.decimal_degree,
                         'S': abs(self.second)}
         format_elements = format_str.split('%')
-        coord_list = [str(format2value.get(element, element)) for element in format_elements]
+        has_hemisphere = any(self._parse_format_element(e)[1] == 'H' for e in format_elements)
+        coord_list = []
+        for element in format_elements:
+            pad, specifier, precision = self._parse_format_element(element)
+            if specifier in format2value:
+                value = format2value[specifier]
+                if isinstance(value, str):
+                    coord_list.append(value)
+                else:
+                    coord_list.append(self._format_value(value, pad, precision))
+            else:
+                coord_list.append(element)
         coord_str = ''.join(coord_list)
-        if 'H' in format_elements:  # No negative values when hemispheres are indicated
+        if has_hemisphere:  # No negative values when hemispheres are indicated
             coord_str = coord_str.replace('-', '')
         return coord_str
+
+    @staticmethod
+    def _parse_format_element(element):
+        """
+        Parse a format element into (zero_pad_width, specifier, precision).
+        Examples: '02d' -> (2, 'd', None), 'M.3' -> (None, 'M', 3), 'S' -> (None, 'S', None)
+        Returns (None, None, None) for separator elements.
+        """
+        match = re.match(r'^(0\d+)?([DMdmSH])(?:\.(\d+))?$', element)
+        if match:
+            pad = int(match.group(1)) if match.group(1) else None
+            specifier = match.group(2)
+            precision = int(match.group(3)) if match.group(3) else None
+            return pad, specifier, precision
+        return None, None, None
+
+    @staticmethod
+    def _format_value(value, pad=None, precision=None):
+        """
+        Format a numeric value with optional zero-padding and decimal precision.
+        pad: minimum width of the integer part (zero-padded), e.g. pad=2 means 5 -> '05', 162 -> '162'
+        precision: number of decimal places, e.g. precision=3 means 52.998 -> '52.998'
+        """
+        if precision is not None:
+            formatted = f'{value:.{precision}f}'
+        else:
+            formatted = str(value)
+        if pad is not None:
+            sign = '-' if formatted.startswith('-') else ''
+            formatted = formatted.lstrip('-')
+            if '.' in formatted:
+                int_part, dec_part = formatted.split('.', 1)
+                int_part = int_part.zfill(pad)
+                formatted = sign + int_part + '.' + dec_part
+            else:
+                formatted = sign + formatted.zfill(pad)
+        return formatted
     
+    def __eq__(self, other):
+        return self.decimal_degree == other.decimal_degree
+
     def __cmp__(self, other):
         return cmp(self.decimal_degree, other.decimal_degree)
     

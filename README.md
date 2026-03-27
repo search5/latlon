@@ -68,47 +68,69 @@ Use the offset() method of LatLon objects, which takes an initial heading (in de
 Create a LatLon object from coordinates:
 
 ```python
->> palmyra = LatLon(Latitude(5.8833), Longitude(-162.0833)) # Location of Palmyra Atoll in decimal degrees
->> palmyra = LatLon(5.8833, -162.0833) # Same thing but simpler!
->> palmyra = LatLon(Latitude(degree = 5, minute = 52, second = 59.88),
->>                  Longitude(degree = -162, minute = -4.998) # or more complicated!
->> print(palmyra.to_string('d% %m% %S% %H')) # Print coordinates to degree minute second
+from latlon import LatLon, Latitude, Longitude
+
+palmyra = LatLon(Latitude(5.8833), Longitude(-162.0833)) # Location of Palmyra Atoll in decimal degrees
+palmyra = LatLon(5.8833, -162.0833) # Same thing but simpler!
+palmyra = LatLon(Latitude(degree = 5, minute = 52, second = 59.88),
+                 Longitude(degree = -162, minute = -4.998)) # or more complicated!
+print(palmyra.to_string('d% %m% %S% %H')) # Print coordinates to degree minute second
+```
+
+Expected output:
+```
 ('5 52 59.88 N', '162 4 59.88 W')
 ```
 
 Create a Latlon object from a formatted string:
 
 ```python
->> palmyra = string2latlon('5 52 59.88 N', '162 4 59.88 W', 'd% %m% %S% %H')
->> print(palmyra.to_string('d%_%M')) # Print coordinates as degree minutes separated by underscore
+from latlon import string2latlon
+
+palmyra = string2latlon('5 52 59.88 N', '162 4 59.88 W', 'd% %m% %S% %H')
+print(palmyra.to_string('d%_%M')) # Print coordinates as degree minutes separated by underscore
+```
+
+Expected output:
+```
 ('5_52.998', '-162_4.998')
 ```
 
 Perform some calculations:
 
 ```python
->> palmyra = LatLon(Latitude(5.8833), Longitude(-162.0833)) # Location of Palmyra Atoll
->> honolulu = LatLon(Latitude(21.3), Longitude(-157.8167)) # Location of Honolulu, HI
->> distance = palmyra.distance(honolulu) # WGS84 distance in km
->> print distance
+from latlon import LatLon, Latitude, Longitude
+
+palmyra = LatLon(Latitude(5.8833), Longitude(-162.0833)) # Location of Palmyra Atoll
+honolulu = LatLon(Latitude(21.3), Longitude(-157.8167)) # Location of Honolulu, HI
+distance = palmyra.distance(honolulu) # WGS84 distance in km
+print(distance)
+print(palmyra.distance(honolulu, ellipse = 'sphere')) # FAI distance in km
+initial_heading = palmyra.heading_initial(honolulu) # Heading from Palmyra to Honolulu on WGS84 ellipsoid
+print(initial_heading)
+hnl = palmyra.offset(initial_heading, distance) # Reconstruct Honolulu based on offset from Palmyra
+print(hnl.to_string('D')) # Coordinates of Honolulu
+```
+
+Expected output:
+```
 1766.69130376
->> print(palmyra.distance(honolulu, ellipse = 'sphere')) # FAI distance in km
 1774.77188181
->> initial_heading = palmyra.heading_initial(honolulu) # Heading from Palmyra to Honolulu on WGS84 ellipsoid
->> print(initial_heading)
 14.6907922022
->> hnl = palmyra.offset(initial_heading, distance) # Reconstruct Honolulu based on offset from Palmyra
->> print(hnl.to_string('D')) # Coordinates of Honolulu
 ('21.3', '-157.8167')
 ```
 
 Manipulate LatLon objects using GeoVectors:
 
 ```python
->> vector = (honolulu - palmyra) * 2 # A GeoVector with 2x the magnitude of a vector from palmyra to honolulu
->> print(vector) # Print heading and magnitude
-14.6907922022 3533.38260751
-print(palmyra + (vector/2.0)) # Recreate the coordinates of Honolulu by adding half of vector to palmyra
+vector = (honolulu - palmyra) * 2 # A GeoVector with 2x the magnitude of a vector from palmyra to honolulu
+print(vector) # Print heading and magnitude
+print(palmyra + (vector / 2.0)) # Recreate the coordinates of Honolulu by adding half of vector to palmyra
+```
+
+Expected output:
+```
+14.6907922022, 3533.38260751
 21.3, -157.8167
 ```
 
