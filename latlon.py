@@ -127,17 +127,17 @@ class GeoCoord:
               Examples: '02d' for zero-padded degrees, 'M.3' for decimal minutes with 3 decimal places,
                 '02d%M.3%H' would give '05_52.998_N' with separator '_'
         Examples:
-            >> palmyra = LatLon(5.8833, -162.0833)
-            >> palmyra.to_string('D') # Degree decimal output
+            >>> palmyra = LatLon(5.8833, -162.0833)
+            >>> palmyra.to_string('D') # Degree decimal output
             ('5.8833', '-162.0833')
-            >> palmyra.to_string('H% %D')
+            >>> palmyra.to_string('H% %D')
             ('N 5.8833', 'W 162.0833')
-            >> palmyra.to_string('d%_%M')
+            >>> palmyra.to_string('d%_%M')
             ('5_52.998', '-162_4.998')
-            >> palmyra.to_string('d%_%M.3')
+            >>> palmyra.to_string('d%_%M.3')
             ('5_52.998', '-162_4.998')
-            >> palmyra.to_string('02d%M.3%H')
-            ('0552.998N', '16204.998W')
+            >>> palmyra.to_string('02d%M.3%H')
+            ('0552.998N', '1624.998W')
         """
         format2value = {'H': self.get_hemisphere(),
                         'M': abs(self.decimal_minute),
@@ -188,7 +188,7 @@ class GeoCoord:
         if precision is not None:
             formatted = f'{value:.{precision}f}'
         else:
-            formatted = str(value)
+            formatted = str(round(value, 10))
         if pad is not None:
             sign = '-' if formatted.startswith('-') else ''
             formatted = formatted.lstrip('-')
@@ -393,7 +393,7 @@ def string2geocoord(coord_str, coord_class, format_str='D'):
         '''Having the hemisphere identifier at the beginning is problematic for ensuring that
         the final coordinate value will be negative. Instead, change the identifier and the
         format string so that the hemisphere is identified at the end:'''
-        new_coord_start = re.search('\d', coord_str).start()  # Find the beginning of the coordinate
+        new_coord_start = re.search(r'\d', coord_str).start()  # Find the beginning of the coordinate
         new_format_start = re.search('[a-gi-zA-GI-Z]', format_str).start()  # Find the first non-hemisphere identifier
         # Move hemisphere identifier to the back
         format_str = '% %'.join((format_str[new_format_start:], format_str[0]))
